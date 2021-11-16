@@ -1,5 +1,7 @@
 body {
     font-family: 'Lato', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 #wrapper {
@@ -35,7 +37,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em;
+    font-size: 2vw;
     font-weight: bold;
     border: 1px solid black;
     border-top: none;
@@ -55,7 +57,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3em;
+    font-size: 5vh;
     font-weight: bold;
     border: 1px solid black;
 }
@@ -94,4 +96,26 @@ body {
     position: absolute;
     right: 0;
     top: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#menu div {
+    color: white;
+    font-weight: bold;
+    font-size: 1.5vw;
+}
+
+#menutime {
+    width: 100%;
+    height: 10%;
+    border-bottom: 1px solid black; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#menucontent {
+    width: 100%;
+    height: 90%;
 }

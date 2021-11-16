@@ -94,10 +94,52 @@
                 </div>
             </div>
         </div>
-        <div id="menu"></div>
+        <div id="menu">
+            <div id="menutime"></div>
+            <div id="menucontent"></div>
+        </div>
     </div>
 
     <!-- sposob na display: flex + flex-direction column i wrap (max 9 lekcji w kolumnie) -->
+
+    <script type="text/javascript">
+        function leadingZero(i) {
+            return (i < 10) ? "0" + i : i;
+        }
+
+        const data = new Date();
+
+        function showTextTime() {
+            const data = new Date();
+            const menutime = document.querySelector("#menutime");
+            const dniTygodnia = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
+            const dzien = `${dniTygodnia[data.getDay()]}, ${leadingZero(data.getDate())} . ${leadingZero(data.getMonth() + 1)} . ${data.getFullYear()}`
+            const godzina = `${leadingZero(data.getHours())} : ${leadingZero(data.getMinutes())} : ${leadingZero(data.getSeconds())}`
+            menutime.innerHTML = dzien + "<br>" + godzina;
+        }
+        let currentDay = parseInt(data.getDay());
+        switch (currentDay) {
+            case 1:
+                document.querySelector("#days div:nth-child(1)").style.textDecoration = ("underline");
+                break;
+            case 2:
+                document.querySelector("#days div:nth-child(2)").style.textDecoration = ("underline");
+                break;
+            case 3:
+                document.querySelector("#days div:nth-child(3)").style.textDecoration = ("underline");
+                break;
+            case 4:
+                document.querySelector("#days div:nth-child(4)").style.textDecoration = ("underline");
+                break;
+            case 5:
+                document.querySelector("#days div:nth-child(5)").style.textDecoration = ("underline");
+                break;
+
+        }
+
+        showTextTime();
+        const timeRefresh = setInterval(showTextTime, 1000);
+    </script>
 
 </body>
 
