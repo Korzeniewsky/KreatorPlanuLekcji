@@ -37,66 +37,67 @@
                 </div>
                 <div id="lessons">
                     <div class="lekcje poniedzialek">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
                     </div>
                     <div class="lekcje wtorek">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
                     </div>
                     <div class="lekcje sroda">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
                     </div>
                     <div class="lekcje czwartek">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
                     </div>
                     <div class="lekcje piatek">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
+                        <div class="lekcja"></div>
                     </div>
                 </div>
             </div>
         </div>
         <div id="menu">
             <div id="menutime"></div>
-            <div id="menucontent"></div>
+            <div id="menucontent">
+            </div>
         </div>
     </div>
 
@@ -135,6 +136,56 @@
                 document.querySelector("#days div:nth-child(5)").style.textDecoration = ("underline");
                 break;
 
+        }
+
+        const lekcje = document.querySelectorAll(".lekcje .lekcja");
+
+        function editLesson() {
+            if (this.className != "lekcja submitted") {
+                const menuContent = document.querySelector("#menucontent");
+                menuContent.innerHTML =  
+                (`
+                <form>
+                    <p>Lekcja:</p>
+                    <input type="text" name="nazwaLekcji" placeholder="Nazwa lekcji" required="required" maxlength="50">
+                    <p>Trwa od:</p>
+                    <input type="time" name="czasOd" min="07:00" max="18:00" required="required">
+                    <p>do:</p>
+                    <input type="time" name="czasDo" min="07:00" max="18:00" required="required">
+                    <p>Sala (opcjonalnie):</p>
+                    <input type="text" name="sala" placeholder="Numer sali">
+                    <p>Nauczyciel (opcjonalnie):</p>
+                    <input type="text" name="nauczyciel" placeholder="Nauczyciel">
+                    <br>
+                    <input type="submit" name="dodaj" value="Dodaj">
+                </form>
+                `)
+
+                const formularz = document.querySelector('#menucontent form');
+                const nazwaLekcji = document.querySelector('input[name="nazwaLekcji"]');
+                const czasOd = document.querySelector('input[name="czasOd"]');
+                const czasDo = document.querySelector('input[name="czasDo"]');
+                const dodaj = document.querySelector('input[name="dodaj"]');
+                dodaj.addEventListener("click", ()=> {
+                    if (nazwaLekcji.value != "" && czasOd.value != "" && czasDo.value != "")
+                    {
+                        this.innerHTML = (`<h4>${nazwaLekcji.value}</h4><p>${czasOd.value} - ${czasDo.value}</p>`);
+                        this.className = "lekcja submitted";
+                    }
+                })
+                
+                formularz.addEventListener("submit", function(event) {
+                    event.preventDefault();
+                    console.log("essa")
+                })
+            }
+            else {
+                console.log("To już jest zapisane")
+            }
+        }
+
+        for (let i = 0; i < lekcje.length; i++) {
+            lekcje[i].addEventListener('click', editLesson, false);
         }
 
         showTextTime();

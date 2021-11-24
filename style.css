@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Lato', sans-serif;
     margin: 0;
@@ -118,4 +122,25 @@ body {
 #menucontent {
     width: 100%;
     height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#menucontent form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#menucontent input {
+    width: 80%;
+    font-size: 1.5em;
+}
+
+#menucontent p:first-child {
+    margin-top: 0;
 }
