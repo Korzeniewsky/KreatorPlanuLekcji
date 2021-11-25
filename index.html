@@ -118,6 +118,9 @@
             const godzina = `${leadingZero(data.getHours())} : ${leadingZero(data.getMinutes())} : ${leadingZero(data.getSeconds())}`
             menutime.innerHTML = dzien + "<br>" + godzina;
         }
+        showTextTime();
+        const timeRefresh = setInterval(showTextTime, 1000);
+
         let currentDay = parseInt(data.getDay());
         switch (currentDay) {
             case 1:
@@ -138,11 +141,18 @@
 
         }
 
+        const daneLekcji = [];
+
         const lekcje = document.querySelectorAll(".lekcje .lekcja");
+        for (let i = 0; i < lekcje.length; i++) {
+            lekcje[i].id = i;
+        }
 
         function editLesson() {
+            const menuContent = document.querySelector("#menucontent");
+            let i = this.id;
             if (this.className != "lekcja submitted") {
-                const menuContent = document.querySelector("#menucontent");
+                console.log(i);      
                 menuContent.innerHTML =  
                 (`
                 <form>
@@ -165,31 +175,101 @@
                 const nazwaLekcji = document.querySelector('input[name="nazwaLekcji"]');
                 const czasOd = document.querySelector('input[name="czasOd"]');
                 const czasDo = document.querySelector('input[name="czasDo"]');
+                const sala = document.querySelector('input[name="sala"]');
+                const nauczyciel = document.querySelector('input[name="nauczyciel"]');
                 const dodaj = document.querySelector('input[name="dodaj"]');
+                     
                 dodaj.addEventListener("click", ()=> {
+                    daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value]
                     if (nazwaLekcji.value != "" && czasOd.value != "" && czasDo.value != "")
                     {
-                        this.innerHTML = (`<h4>${nazwaLekcji.value}</h4><p>${czasOd.value} - ${czasDo.value}</p>`);
+                        this.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
+                        if (sala.value != "") this.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
                         this.className = "lekcja submitted";
                     }
                 })
                 
                 formularz.addEventListener("submit", function(event) {
                     event.preventDefault();
-                    console.log("essa")
                 })
             }
             else {
-                console.log("To już jest zapisane")
+                menuContent.innerHTML =  
+                (`
+                <section>
+                    <p>Lekcja:</p>
+                    <h1>${daneLekcji[i][0]}</h1>
+                    <p>Trwa od:</p>
+                    <h1>${daneLekcji[i][1]}</h1>
+                    <p>do:</p>
+                    <h1>${daneLekcji[i][2]}</h1>
+                    <p>Sala:</p>
+                    <h1>${daneLekcji[i][3]}</h1>
+                    <p>Nauczyciel:</p>
+                    <h1>${daneLekcji[i][4]}</h1>
+                    <br>
+                    <input type="submit" name="edytuj" value="Edytuj">
+                </section>
+                `)
+                const edytuj = document.querySelector('input[name="edytuj"]');
+                edytuj.addEventListener("click", ()=> {
+                    const menuContent = document.querySelector("#menucontent");
+                    let i = this.id;
+                    console.log(i);
+                    const lekcja = document.querySelector(`div[id="${i}"]`);
+                    menuContent.innerHTML =  
+                    (`
+                    <form>
+                        <p>Lekcja:</p>
+                        <input type="text" name="nazwaLekcji" placeholder="Nazwa lekcji" required="required" maxlength="50">
+                        <p>Trwa od:</p>
+                        <input type="time" name="czasOd" min="07:00" max="18:00" required="required">
+                        <p>do:</p>
+                        <input type="time" name="czasDo" min="07:00" max="18:00" required="required">
+                        <p>Sala (opcjonalnie):</p>
+                        <input type="text" name="sala" placeholder="Numer sali">
+                        <p>Nauczyciel (opcjonalnie):</p>
+                        <input type="text" name="nauczyciel" placeholder="Nauczyciel">
+                        <br>
+                        <input type="submit" name="potwierdz" value="Potwierdź">
+                    </form>
+                    `)
+
+                    const formularz = document.querySelector('#menucontent form');
+                    const nazwaLekcji = document.querySelector('input[name="nazwaLekcji"]');
+                    const czasOd = document.querySelector('input[name="czasOd"]');
+                    const czasDo = document.querySelector('input[name="czasDo"]');
+                    const sala = document.querySelector('input[name="sala"]');
+                    const nauczyciel = document.querySelector('input[name="nauczyciel"]');
+                    const potwierdz = document.querySelector('input[name="potwierdz"]');
+
+                    nazwaLekcji.value = daneLekcji[i][0];
+                    czasOd.value = daneLekcji[i][1];
+                    czasDo.value = daneLekcji[i][2];
+                    sala.value = daneLekcji[i][3];
+                    nauczyciel.value = daneLekcji[i][4];
+
+                    potwierdz.addEventListener("click", ()=> {
+                        daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value]
+                        if (nazwaLekcji.value != "" && czasOd.value != "" && czasDo.value != "")
+                        {
+                            lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
+                            if (sala.value != "") lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+                        }
+                    })
+                    
+                    formularz.addEventListener("submit", function(event) {
+                        event.preventDefault();
+                    })
+
+                })
+                
             }
         }
 
         for (let i = 0; i < lekcje.length; i++) {
             lekcje[i].addEventListener('click', editLesson, false);
         }
-
-        showTextTime();
-        const timeRefresh = setInterval(showTextTime, 1000);
     </script>
 
 </body>

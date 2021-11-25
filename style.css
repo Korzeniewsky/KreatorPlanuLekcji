@@ -144,3 +144,27 @@ body {
 #menucontent p:first-child {
     margin-top: 0;
 }
+
+#menucontent section {
+    width: 80%;
+}
+
+#menucontent section * {
+    margin: 0;
+    font-weight: normal;
+}
+
+#menucontent section h1 {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.lekcja {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.lekcja * {
+    margin: 0;
+}
