@@ -140,13 +140,27 @@
                 break;
 
         }
-
-        const daneLekcji = [];
+        console.log(localStorage.length);
 
         const lekcje = document.querySelectorAll(".lekcje .lekcja");
         for (let i = 0; i < lekcje.length; i++) {
             lekcje[i].id = i;
         }
+
+        let daneLekcji = [];
+        if (localStorage.length != 0) {
+            daneLekcji = JSON.parse(localStorage.getItem("daneLekcjiStorage"));
+            for (let i = 0; i < lekcje.length; i++) {
+                if (daneLekcji[i] != null)
+                {
+                    const lekcja = document.querySelector(`div[id="${i}"]`);
+                    lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
+                    if (daneLekcji[i][3]) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+                    lekcja.className = "lekcja submitted";
+                }
+                }    
+            }
+        
 
         function editLesson() {
             const menuContent = document.querySelector("#menucontent");
@@ -181,10 +195,13 @@
                      
                 dodaj.addEventListener("click", ()=> {
                     daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value]
-                    if (nazwaLekcji.value != "" && czasOd.value != "" && czasDo.value != "")
+                    localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
+                    console.log(localStorage.length);
+                    console.log(localStorage);
+                    if (nazwaLekcji.value && czasOd.value && czasDo.value)
                     {
                         this.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
-                        if (sala.value != "") this.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+                        if (sala.value) this.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
                         this.className = "lekcja submitted";
                     }
                 })
@@ -248,13 +265,16 @@
                     czasDo.value = daneLekcji[i][2];
                     sala.value = daneLekcji[i][3];
                     nauczyciel.value = daneLekcji[i][4];
-
+                    
                     potwierdz.addEventListener("click", ()=> {
                         daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value]
-                        if (nazwaLekcji.value != "" && czasOd.value != "" && czasDo.value != "")
+                        localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
+                        console.log(localStorage.length);
+                        console.log(localStorage);
+                        if (nazwaLekcji.value && czasOd.value && czasDo.value)
                         {
                             lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
-                            if (sala.value != "") lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+                            if (sala.value) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
                         }
                     })
                     
