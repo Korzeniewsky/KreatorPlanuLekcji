@@ -109,6 +109,11 @@
         }
         
         const data = new Date();
+        /*
+        const tablica = [];
+        tablica[0] = [];
+        if (tablica[0].length == 0) console.log("ok");
+        */
 
         function showTextTime() {
             const data = new Date();
@@ -148,23 +153,25 @@
         }
 
         let daneLekcji = [];
+        for (let i = 0; i < lekcje.length; i++) {
+            daneLekcji[i] = [];
+        }
         if (localStorage.length != 0) {
             daneLekcji = JSON.parse(localStorage.getItem("daneLekcjiStorage"));
             for (let i = 0; i < lekcje.length; i++) {
-                if (daneLekcji[i] != null)
-                {
+                if (daneLekcji[i].length != 0){
                     const lekcja = document.querySelector(`div[id="${i}"]`);
                     lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
                     if (daneLekcji[i][3]) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
                     lekcja.className = "lekcja submitted";
                 }
-                }    
-            }
+            }    
+        }
         
 
         function editLesson() {
             const menuContent = document.querySelector("#menucontent");
-            let i = this.id;
+            let i = parseInt(this.id);
             if (this.className != "lekcja submitted") {
                 console.log(i);
                 menuContent.innerHTML =  
@@ -192,7 +199,8 @@
                 const sala = document.querySelector('input[name="sala"]');
                 const nauczyciel = document.querySelector('input[name="nauczyciel"]');
                 const dodaj = document.querySelector('input[name="dodaj"]');
-                     
+                const lekcja = document.querySelector(`div[id="${i}"]`);
+                
                 dodaj.addEventListener("click", ()=> {
                     const liczbaSekundOd = ((parseInt(czasOd.value.substring(0, 2)) * 60) + parseInt(czasOd.value.substring(3, 5))) * 60;
                     const liczbaSekundDo = ((parseInt(czasDo.value.substring(0, 2)) * 60) + parseInt(czasDo.value.substring(3, 5))) * 60;
@@ -201,20 +209,53 @@
                         alert("Podane godziny są nieprawidłowe: godzina zakończenia lekcji jest wcześniejsza lub równa godzinie rozpoczęcia");
                     } else if (liczbaSekundOd < 25200 || liczbaSekundDo > 64800) {
                         alert("Podane godziny są nieprawidłowe: godziny rozpoczęcia i zakończenia lekcji muszą znajdować się w przedziale od 07:00 do 18:00");
-                    } else {
-                        daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value, liczbaSekundOd, liczbaSekundDo]
-                        localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
-                        console.log(localStorage.length);
-                        console.log(localStorage);
-                        if (nazwaLekcji.value && czasOd.value && czasDo.value)
-                        {
-                            this.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
-                            if (sala.value) this.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
-                            this.className = "lekcja submitted";
+                    } else if (i % 9 != 0) {
+                        let warunek1 = true;
+                        let warunek2 = true;
+                        for (let j = i - 1; j >= parseInt(i / 9) * 9; j--) {
+                            
+                            if (daneLekcji[j][6] != undefined && liczbaSekundOd < daneLekcji[j][6]) {
+                                alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
+                                warunek1 = false;
+                                break;
+                            }
                         }
-                    }
-                    
+                        for (let j = i + 1; j <= parseInt((i / 9)) * 9 + 8; j++) {
+                            console.log(j);
+                            console.log(liczbaSekundDo);
+                            console.log(daneLekcji[j][5]);
+                            if (daneLekcji[j][5] != undefined && liczbaSekundDo > daneLekcji[j][5]) {
+                                alert("Podane godziny są nieprawidłowe: lekcja musi kończyć się przed tą, która jest niżej w planie");
+                                warunek2 = false;
+                                break;
+                            }
+                        }
+                        if (warunek1 && warunek2) submitLesson(liczbaSekundOd, liczbaSekundDo);
+                    } else {
+                        let warunek = true;
+                        for (let j = i + 1; j <= parseInt((i / 9)) * 9 + 8; j++) {
+                            if (daneLekcji[j][5] != undefined && liczbaSekundDo > daneLekcji[j][5]) {
+                                alert("Podane godziny są nieprawidłowe: lekcja musi kończyć się przed tą, która jest niżej w planie");
+                                warunek = false;
+                                break;
+                            }
+                        }
+                        if (warunek) submitLesson(liczbaSekundOd, liczbaSekundDo);
+                    }                  
                 })
+
+                function submitLesson(liczbaSekundOd, liczbaSekundDo) {
+                    daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value, liczbaSekundOd, liczbaSekundDo]
+                    localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
+                    //console.log(localStorage.length);
+                    //console.log(localStorage);
+                    if (nazwaLekcji.value && czasOd.value && czasDo.value)
+                    {
+                        lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
+                        if (sala.value) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+                        lekcja.className = "lekcja submitted";
+                    }
+                }
                 
                 formularz.addEventListener("submit", function(event) {
                     event.preventDefault();
@@ -318,6 +359,53 @@
                 }
             }
         }*/
+
+        /*
+        if (i != 0) {
+            console.log(i);
+            if (parseInt(i / 9) == parseInt((i - 1) / 9)) {
+                console.log(parseInt(i / 9));
+                console.log(parseInt((i - 1) / 9));
+                if (i % 9 != 0) {
+                    console.log(i % 9);
+                    console.log(liczbaSekundOd);
+                    console.log(daneLekcji[i-1][6]);
+                    if (daneLekcji[i-1][6] != undefined && liczbaSekundOd < daneLekcji[i-1][6]) {
+                        alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
+                    } else submitLesson()
+                } else submitLesson()
+            } else submitLesson()
+        } else submitLesson() */
+        /*
+        if (i % 9 != 0) {
+            let warunek1 = false;
+            let warunek2 = false;
+            for (let j = i - 1; j >= parseInt((i / 9) * 9); j--) {
+                if (daneLekcji[j][6] != undefined && liczbaSekundOd < daneLekcji[j][6]) {
+                    alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
+                    warunek1 = false;
+                    break;
+                } else warunek1 = true;
+            }
+            for (let j = i + 1; j <= parseInt((i / 9)) * 9 + 8; j++) {
+                if (daneLekcji[j][5] != undefined && liczbaSekundDo > daneLekcji[j][5]) {
+                    alert("Podane godziny są nieprawidłowe: lekcja musi kończyć się przed tą, która jest niżej w planie");
+                    warunek2 = false;
+                    break;
+                } else warunek2 = true;
+            }
+            if (warunek1 && warunek2) submitLesson();
+        } else {
+            let warunek = false;
+            for (let j = i + 1; j <= parseInt((i / 9)) * 9 + 8; j++) {
+                if (daneLekcji[j][5] != undefined && liczbaSekundDo > daneLekcji[j][5]) {
+                    alert("Podane godziny są nieprawidłowe: lekcja musi kończyć się przed tą, która jest niżej w planie");
+                    warunek = false;
+                    break;
+                } else warunek = true;
+            }
+            if (warunek) submitLesson();
+        } */
         
     </script>
 
