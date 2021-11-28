@@ -107,7 +107,7 @@
         function leadingZero(i) {
             return (i < 10) ? "0" + i : i;
         }
-
+        
         const data = new Date();
 
         function showTextTime() {
@@ -166,7 +166,7 @@
             const menuContent = document.querySelector("#menucontent");
             let i = this.id;
             if (this.className != "lekcja submitted") {
-                console.log(i);      
+                console.log(i);
                 menuContent.innerHTML =  
                 (`
                 <form>
@@ -194,16 +194,26 @@
                 const dodaj = document.querySelector('input[name="dodaj"]');
                      
                 dodaj.addEventListener("click", ()=> {
-                    daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value]
-                    localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
-                    console.log(localStorage.length);
-                    console.log(localStorage);
-                    if (nazwaLekcji.value && czasOd.value && czasDo.value)
-                    {
-                        this.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
-                        if (sala.value) this.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
-                        this.className = "lekcja submitted";
+                    const liczbaSekundOd = ((parseInt(czasOd.value.substring(0, 2)) * 60) + parseInt(czasOd.value.substring(3, 5))) * 60;
+                    const liczbaSekundDo = ((parseInt(czasDo.value.substring(0, 2)) * 60) + parseInt(czasDo.value.substring(3, 5))) * 60;
+
+                    if (liczbaSekundOd >= liczbaSekundDo) {
+                        alert("Podane godziny są nieprawidłowe: godzina zakończenia lekcji jest wcześniejsza lub równa godzinie rozpoczęcia");
+                    } else if (liczbaSekundOd < 25200 || liczbaSekundDo > 64800) {
+                        alert("Podane godziny są nieprawidłowe: godziny rozpoczęcia i zakończenia lekcji muszą znajdować się w przedziale od 07:00 do 18:00");
+                    } else {
+                        daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value, liczbaSekundOd, liczbaSekundDo]
+                        localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
+                        console.log(localStorage.length);
+                        console.log(localStorage);
+                        if (nazwaLekcji.value && czasOd.value && czasDo.value)
+                        {
+                            this.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
+                            if (sala.value) this.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+                            this.className = "lekcja submitted";
+                        }
                     }
+                    
                 })
                 
                 formularz.addEventListener("submit", function(event) {
@@ -267,14 +277,22 @@
                     nauczyciel.value = daneLekcji[i][4];
                     
                     potwierdz.addEventListener("click", ()=> {
-                        daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value]
-                        localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
-                        console.log(localStorage.length);
-                        console.log(localStorage);
-                        if (nazwaLekcji.value && czasOd.value && czasDo.value)
-                        {
-                            lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
-                            if (sala.value) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+                        const liczbaSekundOd = ((parseInt(czasOd.value.substring(0, 2)) * 60) + parseInt(czasOd.value.substring(3, 5))) * 60;
+                        const liczbaSekundDo = ((parseInt(czasDo.value.substring(0, 2)) * 60) + parseInt(czasDo.value.substring(3, 5))) * 60;
+                        if (liczbaSekundOd >= liczbaSekundDo) {
+                            alert("Podane godziny są nieprawidłowe: godzina zakończenia lekcji jest wcześniejsza lub równa godzinie rozpoczęcia");
+                        } else if (liczbaSekundOd < 25200 || liczbaSekundDo > 64800) {
+                        alert("Podane godziny są nieprawidłowe: godziny rozpoczęcia i zakończenia lekcji muszą znajdować się w przedziale od 07:00 do 18:00");
+                        } else {
+                            daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value, liczbaSekundOd, liczbaSekundDo]
+                            localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
+                            console.log(localStorage.length);
+                            console.log(localStorage);
+                            if (nazwaLekcji.value && czasOd.value && czasDo.value)
+                            {
+                                lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
+                                if (sala.value) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+                            }
                         }
                     })
                     
@@ -290,6 +308,17 @@
         for (let i = 0; i < lekcje.length; i++) {
             lekcje[i].addEventListener('click', editLesson, false);
         }
+        /*
+        if (i != 0) {
+            if (parseInt(i / 9) == parseInt((i - 1) / 9)) {
+                if (i % 9 != 0) {
+                    if (daneLekcji[i][5] < daneLekcji[i-1][6]) {
+                        alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
+                    }
+                }
+            }
+        }*/
+        
     </script>
 
 </body>
