@@ -167,13 +167,27 @@ function editLesson() {
             <p>Nauczyciel:</p>
             <h1>${daneLekcji[i][4]}</h1>
             <br>
-            <input type="button" name="edytuj" value="Edytuj">
-            <input type="button" name="anuluj" value="Anuluj">
+            <div id="buttons">
+                <input type="button" name="edytuj" value="Edytuj">
+                <input type="button" name="anuluj" value="Anuluj">
+                <br><br>
+                <input type="button" name="usun" value="Usuń">
+            </div>
         </section>
         `)
         const edytuj = document.querySelector('input[name="edytuj"]');
         const anuluj = document.querySelector('input[name="anuluj"]');
+        const usun = document.querySelector('input[name="usun"]')
         anuluj.addEventListener("click", startShowingCurrentLesson)
+        usun.addEventListener("click", function() {
+            const lekcja = document.querySelector(`div[id="${i}"]`);
+            if (confirm("Czy na pewno chcesz usunąć lekcję?")) {
+                daneLekcji[i] = [];
+                lekcja.className = "lekcja";
+                lekcja.innerHTML = "";
+                startShowingCurrentLesson();
+            }    
+        })
         edytuj.addEventListener("click", ()=> {
             const menuContent = document.querySelector("#menucontent");
             let i = parseInt(this.id);
@@ -196,7 +210,7 @@ function editLesson() {
                 <div id="buttons">
                     <input type="submit" name="potwierdz" value="Potwierdź">
                     <input type="button" name="anuluj" value="Anuluj">
-                <div id="buttons">
+                </div>
             </form>
             `)
 
