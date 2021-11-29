@@ -189,6 +189,8 @@
                     <input type="text" name="nauczyciel" placeholder="Nauczyciel">
                     <br>
                     <input type="submit" name="dodaj" value="Dodaj">
+                    <br>
+                    <input type="button" name="anuluj" value="Anuluj">
                 </form>
                 `)
 
@@ -200,7 +202,9 @@
                 const nauczyciel = document.querySelector('input[name="nauczyciel"]');
                 const dodaj = document.querySelector('input[name="dodaj"]');
                 const lekcja = document.querySelector(`div[id="${i}"]`);
-                
+                const anuluj = document.querySelector('input[name="anuluj"]');
+
+                anuluj.addEventListener("click", startShowingCurrentLesson)
                 dodaj.addEventListener("click", ()=> {
                     const liczbaSekundOd = ((parseInt(czasOd.value.substring(0, 2)) * 60) + parseInt(czasOd.value.substring(3, 5))) * 60;
                     const liczbaSekundDo = ((parseInt(czasDo.value.substring(0, 2)) * 60) + parseInt(czasDo.value.substring(3, 5))) * 60;
@@ -230,7 +234,10 @@
                                 break;
                             }
                         }
-                        if (warunek1 && warunek2) submitLesson(liczbaSekundOd, liczbaSekundDo);
+                        if (warunek1 && warunek2) {
+                            submitLesson(liczbaSekundOd, liczbaSekundDo);
+                            startShowingCurrentLesson();
+                        }
                     } else {
                         let warunek = true;
                         for (let j = i + 1; j <= parseInt((i / 9)) * 9 + 8; j++) {
@@ -240,8 +247,11 @@
                                 break;
                             }
                         }
-                        if (warunek) submitLesson(liczbaSekundOd, liczbaSekundDo);
-                    }                  
+                        if (warunek) {
+                            submitLesson(liczbaSekundOd, liczbaSekundDo);
+                            startShowingCurrentLesson();
+                        }
+                    }
                 })
 
                 function submitLesson(liczbaSekundOd, liczbaSekundDo) {
@@ -276,10 +286,14 @@
                     <p>Nauczyciel:</p>
                     <h1>${daneLekcji[i][4]}</h1>
                     <br>
-                    <input type="submit" name="edytuj" value="Edytuj">
+                    <input type="button" name="edytuj" value="Edytuj">
+                    <br><br>
+                    <input type="button" name="anuluj" value="Anuluj">
                 </section>
                 `)
                 const edytuj = document.querySelector('input[name="edytuj"]');
+                const anuluj = document.querySelector('input[name="anuluj"]');
+                anuluj.addEventListener("click", startShowingCurrentLesson)
                 edytuj.addEventListener("click", ()=> {
                     const menuContent = document.querySelector("#menucontent");
                     let i = this.id;
@@ -300,6 +314,8 @@
                         <input type="text" name="nauczyciel" placeholder="Nauczyciel">
                         <br>
                         <input type="submit" name="potwierdz" value="Potwierdź">
+                        <br>
+                        <input type="button" name="anuluj" value="Anuluj">
                     </form>
                     `)
 
@@ -310,13 +326,16 @@
                     const sala = document.querySelector('input[name="sala"]');
                     const nauczyciel = document.querySelector('input[name="nauczyciel"]');
                     const potwierdz = document.querySelector('input[name="potwierdz"]');
+                    const anuluj = document.querySelector('input[name="anuluj"]');
 
                     nazwaLekcji.value = daneLekcji[i][0];
                     czasOd.value = daneLekcji[i][1];
                     czasDo.value = daneLekcji[i][2];
                     sala.value = daneLekcji[i][3];
                     nauczyciel.value = daneLekcji[i][4];
+
                     
+                    anuluj.addEventListener("click", startShowingCurrentLesson)
                     potwierdz.addEventListener("click", ()=> {
                         const liczbaSekundOd = ((parseInt(czasOd.value.substring(0, 2)) * 60) + parseInt(czasOd.value.substring(3, 5))) * 60;
                         const liczbaSekundDo = ((parseInt(czasDo.value.substring(0, 2)) * 60) + parseInt(czasDo.value.substring(3, 5))) * 60;
@@ -345,7 +364,10 @@
                                     break;
                                 }
                             }
-                            if (warunek1 && warunek2) submitEditedLesson(liczbaSekundOd, liczbaSekundDo);
+                            if (warunek1 && warunek2) {
+                                submitEditedLesson(liczbaSekundOd, liczbaSekundDo);
+                                startShowingCurrentLesson();
+                            }
                         } else {
                             let warunek = true;
                             for (let j = i + 1; j <= parseInt((i / 9)) * 9 + 8; j++) {
@@ -355,8 +377,11 @@
                                     break;
                                 }
                             }
-                            if (warunek) submitEditedLesson(liczbaSekundOd, liczbaSekundDo);
-                        } 
+                            if (warunek) {
+                                submitEditedLesson(liczbaSekundOd, liczbaSekundDo);
+                                startShowingCurrentLesson();
+                            }
+                        }
                     })
                     
                     function submitEditedLesson(liczbaSekundOd, liczbaSekundDo) {
@@ -381,65 +406,59 @@
         }
 
         for (let i = 0; i < lekcje.length; i++) {
-            lekcje[i].addEventListener('click', editLesson, false);
+            lekcje[i].addEventListener('click', editLesson);
+            lekcje[i].addEventListener('click', stopShowingCurrentLesson);
         }
-        /*
-        if (i != 0) {
-            if (parseInt(i / 9) == parseInt((i - 1) / 9)) {
-                if (i % 9 != 0) {
-                    if (daneLekcji[i][5] < daneLekcji[i-1][6]) {
-                        alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
-                    }
+
+        function showCurrentLesson() {
+            const data = new Date();
+            const dzienTygodnia = parseInt(data.getDay());
+            const currentLiczbaSekund = (data.getHours() * 3600) + (data.getMinutes() * 60) + data.getSeconds();
+            console.log(currentLiczbaSekund);
+            const menuContent = document.querySelector("#menucontent");
+            let czyJestLekcja = false;
+            let j;
+            
+            for (let i = (dzienTygodnia - 1) * 9; i <= (dzienTygodnia * 9) - 1; i++) {
+                console.log(i);
+                console.log(i);
+                
+                if (currentLiczbaSekund >= daneLekcji[i][5] && currentLiczbaSekund <= daneLekcji[i][6]) {
+                    czyJestLekcja = true;
+                    j = i;
+                    break;
                 }
             }
-        }*/
-
-        /*
-        if (i != 0) {
-            console.log(i);
-            if (parseInt(i / 9) == parseInt((i - 1) / 9)) {
-                console.log(parseInt(i / 9));
-                console.log(parseInt((i - 1) / 9));
-                if (i % 9 != 0) {
-                    console.log(i % 9);
-                    console.log(liczbaSekundOd);
-                    console.log(daneLekcji[i-1][6]);
-                    if (daneLekcji[i-1][6] != undefined && liczbaSekundOd < daneLekcji[i-1][6]) {
-                        alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
-                    } else submitLesson()
-                } else submitLesson()
-            } else submitLesson()
-        } else submitLesson() */
-        /*
-        if (i % 9 != 0) {
-            let warunek1 = false;
-            let warunek2 = false;
-            for (let j = i - 1; j >= parseInt((i / 9) * 9); j--) {
-                if (daneLekcji[j][6] != undefined && liczbaSekundOd < daneLekcji[j][6]) {
-                    alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
-                    warunek1 = false;
-                    break;
-                } else warunek1 = true;
+            if (czyJestLekcja) {
+                menuContent.innerHTML =  
+                (`
+                <section>
+                    <p>Obecnie trwa:</p>
+                    <h1>${daneLekcji[j][0]}</h1>
+                    <p>Do końca zostało:</p>
+                    <h1>${parseInt((daneLekcji[j][6] - currentLiczbaSekund) / 60)} min ${(daneLekcji[j][6] - currentLiczbaSekund) - (parseInt((daneLekcji[j][6] - currentLiczbaSekund) / 60) * 60)} sek</h1>
+                </section>
+                `)
+            } else {
+                menuContent.innerHTML =  
+                (`
+                <section>
+                    <p>Obecnie trwa:</p>
+                    <h1>Przerwa</h1>
+                </section>
+                `)
             }
-            for (let j = i + 1; j <= parseInt((i / 9)) * 9 + 8; j++) {
-                if (daneLekcji[j][5] != undefined && liczbaSekundDo > daneLekcji[j][5]) {
-                    alert("Podane godziny są nieprawidłowe: lekcja musi kończyć się przed tą, która jest niżej w planie");
-                    warunek2 = false;
-                    break;
-                } else warunek2 = true;
-            }
-            if (warunek1 && warunek2) submitLesson();
-        } else {
-            let warunek = false;
-            for (let j = i + 1; j <= parseInt((i / 9)) * 9 + 8; j++) {
-                if (daneLekcji[j][5] != undefined && liczbaSekundDo > daneLekcji[j][5]) {
-                    alert("Podane godziny są nieprawidłowe: lekcja musi kończyć się przed tą, która jest niżej w planie");
-                    warunek = false;
-                    break;
-                } else warunek = true;
-            }
-            if (warunek) submitLesson();
-        } */
+            console.log(czyJestLekcja)
+        }
+        function startShowingCurrentLesson() {
+            showCurrentLesson();
+            timeRefresh2 = setInterval(showCurrentLesson, 1000);
+        }
+        function stopShowingCurrentLesson() {
+            clearInterval(timeRefresh2);
+        }
+        showCurrentLesson();
+        startShowingCurrentLesson()
         
     </script>
 
