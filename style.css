@@ -168,3 +168,39 @@ body {
 .lekcja * {
     margin: 0;
 }
+
+#menucontent input[type=text] {
+    background-color: rgba(0, 0, 0, 0);
+    border: 2px solid black;
+    border-radius: 25px;
+    color: white;
+    box-shadow: -3px 5px 18px 0px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+#menucontent input[type=text]::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+#menucontent input[type=time] {
+    width: 60%;
+    background-color: rgba(255, 0, 0, 0);
+    border: 2px solid black;
+    border-radius: 25px;
+    color: white;
+    box-shadow: -3px 5px 18px 0px rgba(0, 0, 0, 0.5);
+}
+
+#menucontent input[type=button], #menucontent input[type=submit] {
+    width: 49%;
+    background-color: rgba(255, 0, 0, 0);
+    border: 2px solid black;
+    border-radius: 25px;
+    color: white;
+    font-size: 1em;
+    box-shadow: -2px 2px 20px 0px rgba(0, 0, 0, 0.5);
+}
+
+#buttons {
+    width: 90%;
+}
