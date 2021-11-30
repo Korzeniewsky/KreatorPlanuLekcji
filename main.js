@@ -45,13 +45,13 @@ for (let i = 0; i < lekcje.length; i++) {
 if (localStorage.length != 0) {
     daneLekcji = JSON.parse(localStorage.getItem("daneLekcjiStorage"));
     for (let i = 0; i < lekcje.length; i++) {
-        if (daneLekcji[i].length != 0){
+        if (daneLekcji[i].length != 0) {
             const lekcja = document.querySelector(`div[id="${i}"]`);
             lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
             if (daneLekcji[i][3]) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
             lekcja.className = "lekcja submitted";
         }
-    }    
+    }
 }
 
 function editLesson() {
@@ -59,8 +59,8 @@ function editLesson() {
     let i = parseInt(this.id);
     if (this.className != "lekcja submitted") {
         console.log(i);
-        menuContent.innerHTML =  
-        (`
+        menuContent.innerHTML =
+            (`
         <form>
             <p>Lekcja:</p>
             <input type="text" name="nazwaLekcji" placeholder="Nazwa lekcji" required="required" maxlength="50">
@@ -91,7 +91,7 @@ function editLesson() {
         const anuluj = document.querySelector('input[name="anuluj"]');
 
         anuluj.addEventListener("click", startShowingCurrentLesson)
-        dodaj.addEventListener("click", ()=> {
+        dodaj.addEventListener("click", () => {
             const liczbaSekundOd = ((parseInt(czasOd.value.substring(0, 2)) * 60) + parseInt(czasOd.value.substring(3, 5))) * 60;
             const liczbaSekundDo = ((parseInt(czasDo.value.substring(0, 2)) * 60) + parseInt(czasDo.value.substring(3, 5))) * 60;
 
@@ -103,7 +103,7 @@ function editLesson() {
                 let warunek1 = true;
                 let warunek2 = true;
                 for (let j = i - 1; j >= parseInt(i / 9) * 9; j--) {
-                    
+
                     if (daneLekcji[j][6] != undefined && liczbaSekundOd < daneLekcji[j][6]) {
                         alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
                         warunek1 = false;
@@ -118,8 +118,12 @@ function editLesson() {
                     }
                 }
                 if (warunek1 && warunek2) {
-                    submitLesson(liczbaSekundOd, liczbaSekundDo);
-                    startShowingCurrentLesson();
+                    if (nazwaLekcji.value && czasOd.value && czasDo.value) {
+                        submitLesson(liczbaSekundOd, liczbaSekundDo);
+                        startShowingCurrentLesson();
+                    } else {
+                        alert("Nie podano wymaganych wartości");
+                    }
                 }
             } else {
                 let warunek = true;
@@ -131,8 +135,12 @@ function editLesson() {
                     }
                 }
                 if (warunek) {
-                    submitLesson(liczbaSekundOd, liczbaSekundDo);
-                    startShowingCurrentLesson();
+                    if (nazwaLekcji.value && czasOd.value && czasDo.value) {
+                        submitLesson(liczbaSekundOd, liczbaSekundDo);
+                        startShowingCurrentLesson();
+                    } else {
+                        alert("Nie podano wymaganych wartości");
+                    }
                 }
             }
         })
@@ -140,21 +148,18 @@ function editLesson() {
         function submitLesson(liczbaSekundOd, liczbaSekundDo) {
             daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value, liczbaSekundOd, liczbaSekundDo]
             localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
-            if (nazwaLekcji.value && czasOd.value && czasDo.value)
-            {
-                lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
-                if (sala.value) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
-                lekcja.className = "lekcja submitted";
-            }
+            lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
+            if (sala.value) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
+            lekcja.className = "lekcja submitted";
         }
-        
-        formularz.addEventListener("submit", function(event) {
+
+        formularz.addEventListener("submit", function (event) {
             event.preventDefault();
         })
     }
     else {
-        menuContent.innerHTML =  
-        (`
+        menuContent.innerHTML =
+            (`
         <section>
             <p>Lekcja:</p>
             <h1>${daneLekcji[i][0]}</h1>
@@ -179,22 +184,23 @@ function editLesson() {
         const anuluj = document.querySelector('input[name="anuluj"]');
         const usun = document.querySelector('input[name="usun"]')
         anuluj.addEventListener("click", startShowingCurrentLesson)
-        usun.addEventListener("click", function() {
+        usun.addEventListener("click", function () {
             const lekcja = document.querySelector(`div[id="${i}"]`);
             if (confirm("Czy na pewno chcesz usunąć lekcję?")) {
                 daneLekcji[i] = [];
+                localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
                 lekcja.className = "lekcja";
                 lekcja.innerHTML = "";
                 startShowingCurrentLesson();
-            }    
+            }
         })
-        edytuj.addEventListener("click", ()=> {
+        edytuj.addEventListener("click", () => {
             const menuContent = document.querySelector("#menucontent");
             let i = parseInt(this.id);
             console.log(i);
             const lekcja = document.querySelector(`div[id="${i}"]`);
-            menuContent.innerHTML =  
-            (`
+            menuContent.innerHTML =
+                (`
             <form>
                 <p>Lekcja:</p>
                 <input type="text" name="nazwaLekcji" placeholder="Nazwa lekcji" required="required" maxlength="50">
@@ -229,20 +235,20 @@ function editLesson() {
             sala.value = daneLekcji[i][3];
             nauczyciel.value = daneLekcji[i][4];
 
-            
+
             anuluj.addEventListener("click", startShowingCurrentLesson)
-            potwierdz.addEventListener("click", ()=> {
+            potwierdz.addEventListener("click", () => {
                 const liczbaSekundOd = ((parseInt(czasOd.value.substring(0, 2)) * 60) + parseInt(czasOd.value.substring(3, 5))) * 60;
                 const liczbaSekundDo = ((parseInt(czasDo.value.substring(0, 2)) * 60) + parseInt(czasDo.value.substring(3, 5))) * 60;
                 if (liczbaSekundOd >= liczbaSekundDo) {
                     alert("Podane godziny są nieprawidłowe: godzina zakończenia lekcji jest wcześniejsza lub równa godzinie rozpoczęcia");
                 } else if (liczbaSekundOd < 25200 || liczbaSekundDo > 64800) {
-                alert("Podane godziny są nieprawidłowe: godziny rozpoczęcia i zakończenia lekcji muszą znajdować się w przedziale od 07:00 do 18:00");
+                    alert("Podane godziny są nieprawidłowe: godziny rozpoczęcia i zakończenia lekcji muszą znajdować się w przedziale od 07:00 do 18:00");
                 } else if (i % 9 != 0) {
                     let warunek1 = true;
                     let warunek2 = true;
                     for (let j = i - 1; j >= parseInt(i / 9) * 9; j--) {
-                        
+
                         if (daneLekcji[j][6] != undefined && liczbaSekundOd < daneLekcji[j][6]) {
                             alert("Podane godziny są nieprawidłowe: lekcja musi zaczynać się po tej, która jest wyżej w planie");
                             warunek1 = false;
@@ -257,8 +263,12 @@ function editLesson() {
                         }
                     }
                     if (warunek1 && warunek2) {
-                        submitEditedLesson(liczbaSekundOd, liczbaSekundDo);
-                        startShowingCurrentLesson();
+                        if (nazwaLekcji.value && czasOd.value && czasDo.value) {
+                            submitEditedLesson(liczbaSekundOd, liczbaSekundDo);
+                            startShowingCurrentLesson();
+                        } else {
+                            alert("Nie podano wymaganych wartości");
+                        }
                     }
                 } else {
                     let warunek = true;
@@ -270,28 +280,29 @@ function editLesson() {
                         }
                     }
                     if (warunek) {
-                        submitEditedLesson(liczbaSekundOd, liczbaSekundDo);
-                        startShowingCurrentLesson();
+                        if (nazwaLekcji.value && czasOd.value && czasDo.value) {
+                            submitEditedLesson(liczbaSekundOd, liczbaSekundDo);
+                            startShowingCurrentLesson();
+                        } else {
+                            alert("Nie podano wymaganych wartości");
+                        }
                     }
                 }
             })
-            
+
             function submitEditedLesson(liczbaSekundOd, liczbaSekundDo) {
                 daneLekcji[i] = [nazwaLekcji.value, czasOd.value, czasDo.value, sala.value, nauczyciel.value, liczbaSekundOd, liczbaSekundDo]
                 localStorage.setItem("daneLekcjiStorage", JSON.stringify(daneLekcji));
-                if (nazwaLekcji.value && czasOd.value && czasDo.value)
-                {
-                    lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
-                    if (sala.value) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
-                }
+                lekcja.innerHTML = (`<h2>${daneLekcji[i][0].substring(0, 15)}${(daneLekcji[i][0].length > 15) ? "..." : ""}</h2><p>${daneLekcji[i][1]} - ${daneLekcji[i][2]}</p>`);
+                if (sala.value) lekcja.innerHTML += (`<p>sala ${daneLekcji[i][3]}</p>`);
             }
 
-            formularz.addEventListener("submit", function(event) {
+            formularz.addEventListener("submit", function (event) {
                 event.preventDefault();
             })
 
         })
-        
+
     }
 }
 
@@ -307,7 +318,7 @@ function showCurrentLesson() {
     const menuContent = document.querySelector("#menucontent");
     let czyJestLekcja = false;
     let j;
-    
+
     for (let i = (dzienTygodnia - 1) * 9; i <= (dzienTygodnia * 9) - 1; i++) {
         if (currentLiczbaSekund >= daneLekcji[i][5] && currentLiczbaSekund <= daneLekcji[i][6]) {
             czyJestLekcja = true;
@@ -316,8 +327,8 @@ function showCurrentLesson() {
         }
     }
     if (czyJestLekcja) {
-        menuContent.innerHTML =  
-        (`
+        menuContent.innerHTML =
+            (`
         <section>
             <p>Obecnie trwa:</p>
             <h1>${daneLekcji[j][0]}</h1>
@@ -326,8 +337,8 @@ function showCurrentLesson() {
         </section>
         `)
     } else {
-        menuContent.innerHTML =  
-        (`
+        menuContent.innerHTML =
+            (`
         <section>
             <p>Obecnie trwa:</p>
             <h1>Przerwa</h1>
